@@ -25,7 +25,7 @@ services:
     env_file: .env
     environment:
       DB_HOST: postgres
-      POSTGRES_PORT: 5432
+      POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
       - "${APP_PORT}:8080"
 
