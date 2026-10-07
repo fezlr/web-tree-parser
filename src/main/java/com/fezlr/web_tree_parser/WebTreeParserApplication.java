@@ -8,5 +8,4 @@ public class WebTreeParserApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WebTreeParserApplication.class, args);
 	}
-
 }
