@@ -22,7 +22,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register", "/error", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())
+                .formLogin(form -> form.loginPage("/login").permitAll())
                 .logout(Customizer.withDefaults());
 
         return http.build();
