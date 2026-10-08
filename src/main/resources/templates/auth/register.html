@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+<h1>Create account</h1>
+
+<form th:action="@{/register}" th:object="${registerRequest}" method="post" novalidate>
+    <div>
+        <label for="username">Username</label>
+        <input type="text" th:field="*{username}" autofocus>
+        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password">
+        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+    </div>
+    <div>
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword">
+        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+    </div>
+    <button type="submit">Register</button>
+</form>
+
+<p>Already registered? <a th:href="@{/login}">Sign in</a></p>
+</body>
+</html>
