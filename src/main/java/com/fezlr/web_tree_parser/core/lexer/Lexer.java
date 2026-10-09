@@ -33,7 +33,7 @@ public class Lexer {
         List<Token> list = new ArrayList<>();
 
         while (!isAtEnd()) {
-            if (peek() == ' ') {
+            if (Character.isWhitespace(peek())) {
                 advance();
 
             } else {
