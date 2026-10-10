@@ -17,21 +17,5 @@
     <div th:if="${#fields.hasErrors('input')}" th:errors="*{input}"></div>
     <button type="submit">Parse</button>
 </form>
-
-<section th:if="${result != null}">
-    <h2>Tree</h2>
-    <pre th:text="${result.tree()}"></pre>
-
-    <h2>Statistics</h2>
-    <table border="1">
-        <tr><th>Total elements</th><td th:text="${result.stats().totalElements()}"></td></tr>
-        <tr><th>Sets</th><td th:text="${result.stats().setCount()}"></td></tr>
-        <tr><th>Subsets</th><td th:text="${result.stats().subsets()}"></td></tr>
-        <tr><th>Max depth</th><td th:text="${result.stats().maxDepth()}"></td></tr>
-        <tr><th>Numbers</th><td th:text="${result.stats().numberCount()}"></td></tr>
-        <tr><th>Identifiers</th><td th:text="${result.stats().identifierCount()}"></td></tr>
-        <tr><th>Strings</th><td th:text="${result.stats().stringCount()}"></td></tr>
-    </table>
-</section>
 </body>
 </html>
