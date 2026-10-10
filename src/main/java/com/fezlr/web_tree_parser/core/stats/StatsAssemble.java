@@ -3,15 +3,23 @@ package com.fezlr.web_tree_parser.core.stats;
 import com.fezlr.web_tree_parser.core.node.*;
 
 public class StatsAssemble {
-    private int totalElements = 0;
-    private int subsets = 0;
-    private int maxDepth = 0;
-    private int numberCount = 0;
-    private int identifierCount = 0;
-    private int stringCount = 0;
-    private int setCount = 0;
+    private int totalElements;
+    private int subsets;
+    private int maxDepth;
+    private int numberCount;
+    private int identifierCount;
+    private int stringCount;
+    private int setCount;
 
     public Stats assemble(Node node) {
+        this.totalElements = 0;
+        this.subsets = 0;
+        this.maxDepth = 0;
+        this.numberCount = 0;
+        this.identifierCount = 0;
+        this.stringCount = 0;
+        this.setCount = 0;
+
         check(node, 1);
 
         return new Stats(
