@@ -4,13 +4,13 @@ import com.fezlr.web_tree_parser.user.entity.Role;
 import com.fezlr.web_tree_parser.user.entity.UserEntity;
 import com.fezlr.web_tree_parser.user.exception.UsernameAlreadyExistsException;
 import com.fezlr.web_tree_parser.user.repository.UserRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
