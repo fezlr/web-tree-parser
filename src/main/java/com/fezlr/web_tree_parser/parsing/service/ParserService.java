@@ -19,6 +19,10 @@ public class ParserService {
     private final ParseHistoryService parseHistoryService;
     private final ParseHistoryMapper parseHistoryMapper;
 
+    public Node parseTree(String input) {
+        return new Parser(new Lexer(input).tokenize()).parse();
+    }
+
     public ParseResult parse(String input) {
         Node tree = new Parser(new Lexer(input).tokenize()).parse();
         StatsAssemble statsAssemble = new StatsAssemble();
