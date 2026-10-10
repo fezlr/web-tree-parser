@@ -13,6 +13,13 @@
     parsed at <span th:text="${#temporals.format(entry.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
 </p>
 
+<p>
+    Export:
+    <a th:href="@{/results/{id}/export(id=${entry.id}, format='json')}">JSON</a>
+    |
+    <a th:href="@{/results/{id}/export(id=${entry.id}, format='xml')}">XML</a>
+</p>
+
 <h2>Source</h2>
 <pre th:text="${entry.source}"></pre>
 
