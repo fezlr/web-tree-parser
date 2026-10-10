@@ -2,6 +2,8 @@ package com.fezlr.web_tree_parser.history.controller;
 
 import com.fezlr.web_tree_parser.TestcontainersConfiguration;
 import com.fezlr.web_tree_parser.auth.security.UserDetailsImpl;
+import com.fezlr.web_tree_parser.history.mapper.ParseHistoryMapper;
+import com.fezlr.web_tree_parser.history.service.ParseHistoryService;
 import com.fezlr.web_tree_parser.user.entity.Role;
 import com.fezlr.web_tree_parser.user.entity.UserEntity;
 import com.fezlr.web_tree_parser.user.service.UserService;
@@ -28,6 +30,12 @@ public class ParseHistoryControllerTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ParseHistoryService parseHistoryService;
+
+    @Autowired
+    private ParseHistoryMapper parseHistoryMapper;
 
     @Test
     void shouldOpenResult_whenUserIsOwner() throws Exception {
@@ -59,7 +67,7 @@ public class ParseHistoryControllerTest {
     }
 
     @Test
-    void shouldOpenResult_whenUserIsAdministrator() throws Exception {
+    void shouldRedirectToLogin_whenUserIsAnonymous() throws Exception {
         UserEntity owner = account("accessprivate", Role.USER);
         String location = parseAs(owner, "{1}");
 
@@ -96,6 +104,50 @@ public class ParseHistoryControllerTest {
         String body = historyPageAs(admin);
 
         assertThat(body).contains("firstmarker", "secondmarker", "adminviewalice", "adminviewbob");
+    }
+
+    @Test
+    void shouldFilterListByText_whenQueryIsProvided() throws Exception {
+        UserEntity account = account("ctlsearch", Role.USER);
+        parseAs(account, "{needleset}");
+        parseAs(account, "{haystack}");
+
+        String body = mockMvc.perform(get("/history?query=needle").with(loginAs(account)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(body).contains("{needleset}").doesNotContain("haystack");
+    }
+
+    @Test
+    void shouldRejectInvertedDateRange_whenFromIsAfterTo() throws Exception {
+        UserEntity account = account("ctlrange", Role.USER);
+
+        mockMvc.perform(get("/history?from=2026-10-10&to=2026-10-01").with(loginAs(account)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("history/list"))
+                .andExpect(model().attributeHasFieldErrors("filter", "to"));
+    }
+
+    @Test
+    void shouldRejectTooLongSearchText_whenQueryReachLimit() throws Exception {
+        UserEntity account = account("ctllong", Role.USER);
+
+        mockMvc.perform(get("/history").param("query", "a".repeat(101)).with(loginAs(account)))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("filter", "query"));
+    }
+
+    @Test
+    void shouldTreatNegativePageAsFirstPage_whenPageParameterIsInvalid() throws Exception {
+        UserEntity account = account("ctlnegative", Role.USER);
+        parseAs(account, "{negativemarker}");
+
+        String body = mockMvc.perform(get("/history?page=-5").with(loginAs(account)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(body).contains("negativemarker");
     }
 
     private UserEntity account(String username, Role role) {
