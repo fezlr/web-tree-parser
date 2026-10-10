@@ -1,12 +1,27 @@
 package com.fezlr.web_tree_parser.parsing.service;
 
+import com.fezlr.web_tree_parser.history.mapper.ParseHistoryMapper;
+import com.fezlr.web_tree_parser.history.service.ParseHistoryService;
 import com.fezlr.web_tree_parser.parsing.dto.result.ParseResult;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 class ParserServiceTest {
-    private final ParserService parserService = new ParserService();
+    private ParserService parserService;
+
+    @BeforeEach
+    void setUp() {
+        ParseHistoryService mockHistoryService = mock(ParseHistoryService.class);
+        ParseHistoryMapper mockMapper = mock(ParseHistoryMapper.class);
+
+        parserService = new ParserService(
+                mockHistoryService,
+                mockMapper
+        );
+    }
 
     @Test
     void shouldParseSetIntoTreeAndStatistics_whenInputIsValid() {
