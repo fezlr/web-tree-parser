@@ -4,12 +4,11 @@ import com.fezlr.web_tree_parser.history.entity.ParseHistoryEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-
 import java.time.Instant;
 import java.util.Locale;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ParseHistorySpecifications {
+public final class ParseHistorySpecifications {
 
     public static Specification<ParseHistoryEntity> ownedBy(Long userId) {
         return (root, query, cb) -> cb.equal(root.get("user").get("id"), userId);
