@@ -9,39 +9,58 @@
 
 <h1>History</h1>
 
-<p th:if="${page.empty}">No parses yet.</p>
+<form th:action="@{/history}" th:object="${filter}" method="get">
+    <label for="query">Search</label>
+    <input type="text" id="query" th:field="*{query}">
 
-<div th:unless="${page.empty}">
-    <table border="1">
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>Time</th>
-            <th th:if="${showAuthor}">Author</th>
-            <th>Set</th>
-            <th>Elements</th>
-            <th>Max depth</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item : ${page.content}">
-            <td th:text="${item.id}"></td>
-            <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
-            <td th:if="${showAuthor}" th:text="${item.author}"></td>
-            <td th:text="${#strings.abbreviate(item.source, 60)}"></td>
-            <td th:text="${item.totalElements}"></td>
-            <td th:text="${item.maxDepth}"></td>
-            <td><a th:href="@{/results/{id}(id=${item.id})}">Open</a></td>
-        </tr>
-        </tbody>
-    </table>
+    <label for="from">From</label>
+    <input type="date" id="from" th:field="*{from}">
 
-    <p>
-        <a th:if="${page.hasPrevious()}" th:href="@{/history(page=${page.number - 1})}">Previous</a>
-        <span th:text="|Page ${page.number + 1} of ${page.totalPages}|"></span>
-        <a th:if="${page.hasNext()}" th:href="@{/history(page=${page.number + 1})}">Next</a>
-    </p>
-</div>
+    <label for="to">To</label>
+    <input type="date" id="to" th:field="*{to}">
+
+    <button type="submit">Search</button>
+    <a th:href="@{/history}">Reset</a>
+
+    <div th:if="${#fields.hasErrors('query')}" th:errors="*{query}"></div>
+    <div th:if="${#fields.hasErrors('from')}" th:errors="*{from}"></div>
+    <div th:if="${#fields.hasErrors('to')}" th:errors="*{to}"></div>
+</form>
+
+<p th:if="${page.totalElements == 0}">No entries found.</p>
+<p th:if="${page.totalElements > 0}" th:text="|Found ${page.totalElements}|"></p>
+
+<table border="1" th:unless="${page.empty}">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Time</th>
+        <th th:if="${showAuthor}">Author</th>
+        <th>Set</th>
+        <th>Elements</th>
+        <th>Max depth</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${page.content}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:if="${showAuthor}" th:text="${item.author}"></td>
+        <td th:text="${#strings.abbreviate(item.source, 60)}"></td>
+        <td th:text="${item.totalElements}"></td>
+        <td th:text="${item.maxDepth}"></td>
+        <td><a th:href="@{/results/{id}(id=${item.id})}">Open</a></td>
+    </tr>
+    </tbody>
+</table>
+
+<p th:if="${page.totalPages > 1}">
+    <a th:if="${page.hasPrevious()}"
+       th:href="@{/history(page=${page.number - 1}, query=${filter.query}, from=${filter.from}, to=${filter.to})}">Previous</a>
+    <span th:text="|Page ${page.number + 1} of ${page.totalPages}|"></span>
+    <a th:if="${page.hasNext()}"
+       th:href="@{/history(page=${page.number + 1}, query=${filter.query}, from=${filter.from}, to=${filter.to})}">Next</a>
+</p>
 </body>
 </html>
