@@ -4,13 +4,12 @@
 <body>
 <nav th:fragment="nav">
     <a th:href="@{/}">Parser</a>
+    <a th:href="@{/history}">History</a>
     <span>| Signed in as <span sec:authentication="name"></span></span>
     <form th:action="@{/logout}" method="post" style="display: inline">
         <button type="submit">Log out</button>
     </form>
-
     <hr>
-
 </nav>
 </body>
 </html>
