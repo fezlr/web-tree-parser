@@ -6,6 +6,7 @@ import com.fezlr.web_tree_parser.core.node.Node;
 import com.fezlr.web_tree_parser.core.parser.Parser;
 import com.fezlr.web_tree_parser.core.stats.Stats;
 import com.fezlr.web_tree_parser.core.stats.StatsAssemble;
+import com.fezlr.web_tree_parser.history.dto.request.ParserHistoryFilterRequest;
 import com.fezlr.web_tree_parser.history.dto.response.ParseHistoryResponse;
 import com.fezlr.web_tree_parser.history.entity.ParseHistoryEntity;
 import com.fezlr.web_tree_parser.history.exception.ParseHistoryNotFoundException;
@@ -21,6 +22,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import java.time.LocalDate;
+import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -28,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Import(TestcontainersConfiguration.class)
 class ParseHistoryServiceTest {
     private static final Sort NEWEST_FIRST = Sort.by(Sort.Direction.DESC, "createdAt", "id");
+    private static final PageRequest FIRST_PAGE = PageRequest.of(0, 20, NEWEST_FIRST);
 
     @Autowired
     private ParseHistoryService parseHistoryService;
@@ -40,7 +44,6 @@ class ParseHistoryServiceTest {
 
     @Autowired
     private ParseHistoryMapper parseHistoryMapper;
-
 
     @Test
     void shouldSaveEntryWithStatistics_whenInputIsValid() {
@@ -98,6 +101,103 @@ class ParseHistoryServiceTest {
         assertThat(page.getContent()).extracting(ParseHistoryResponse::author).containsOnly("svclister");
     }
 
+    @Test
+    void shouldFindHistoriesIgnoringCase_whenSubstringIsProvided() {
+        UserEntity user = userService.create("searchcase", "password123", Role.USER);
+        save(user, "{Alpha, beta}");
+        save(user, "{gamma}");
+
+        assertThat(sources(user, filter("ALPHA", null, null))).containsExactly("{Alpha, beta}");
+        assertThat(sources(user, filter("mm", null, null))).containsExactly("{gamma}");
+    }
+
+    @Test
+    void shouldTreatSpecialCharactersLiterally_whenSearchingWithWildcards() {
+        UserEntity user = userService.create("searchwild", "password123", Role.USER);
+        save(user, "{\"a_b\"}");
+        save(user, "{\"axb\"}");
+        save(user, "{\"100%\"}");
+        save(user, "{\"1000\"}");
+
+        assertThat(sources(user, filter("a_b", null, null))).containsExactly("{\"a_b\"}");
+        assertThat(sources(user, filter("%", null, null))).containsExactly("{\"100%\"}");
+    }
+
+    @Test
+    void shouldReturnAllEntries_whenSearchTextIsBlankOrNull() {
+        UserEntity user = userService.create("searchblank", "password123", Role.USER);
+        save(user, "{1}");
+        save(user, "{2}");
+
+        assertThat(sources(user, filter("   ", null, null))).hasSize(2);
+        assertThat(sources(user, filter(null, null, null))).hasSize(2);
+    }
+
+    @Test
+    void shouldFilterHistoriesInclusively_whenDateRangeIsProvided() {
+        UserEntity user = userService.create("searchdates", "password123", Role.USER);
+        save(user, "{1}");
+        LocalDate today = LocalDate.now();
+
+        assertThat(sources(user, filter(null, today, today))).hasSize(1);
+        assertThat(sources(user, filter(null, today.minusDays(3), today.plusDays(3)))).hasSize(1);
+        assertThat(sources(user, filter(null, today.plusDays(1), null))).isEmpty();
+        assertThat(sources(user, filter(null, null, today.minusDays(1)))).isEmpty();
+    }
+
+    @Test
+    void shouldCombineFilters_whenBothTextAndDateAreProvided() {
+        UserEntity user = userService.create("searchcombo", "password123", Role.USER);
+        save(user, "{needle}");
+        save(user, "{haystack}");
+        LocalDate today = LocalDate.now();
+
+        assertThat(sources(user, filter("needle", today, today))).containsExactly("{needle}");
+        assertThat(sources(user, filter("needle", today.plusDays(1), null))).isEmpty();
+    }
+
+    @Test
+    void shouldNeverLeakOtherUsersEntries_whenRegularUserSearches() {
+        UserEntity first = userService.create("searchprivate1", "password123", Role.USER);
+        UserEntity second = userService.create("searchprivate2", "password123", Role.USER);
+        save(first, "{shared}");
+        save(second, "{shared}");
+
+        Page<ParseHistoryResponse> page = parseHistoryService.findHistories(first, filter("shared", null, null), FIRST_PAGE);
+
+        assertThat(page.getContent()).extracting(ParseHistoryResponse::author).containsExactly("searchprivate1");
+    }
+
+    @Test
+    void shouldSpanAllUsersEntries_whenAdministratorSearches() {
+        UserEntity first = userService.create("searchspan1", "password123", Role.USER);
+        UserEntity second = userService.create("searchspan2", "password123", Role.USER);
+        UserEntity admin = userService.create("searchspanadmin", "password123", Role.ADMIN);
+        save(first, "{spanmarker}");
+        save(second, "{spanmarker}");
+
+        Page<ParseHistoryResponse> page = parseHistoryService.findHistories(admin, filter("spanmarker", null, null), FIRST_PAGE);
+
+        assertThat(page.getContent()).extracting(ParseHistoryResponse::author)
+                .containsExactlyInAnyOrder("searchspan1", "searchspan2");
+    }
+
+    @Test
+    void shouldPaginateFilteredResults_whenPageRequestIsSpecified() {
+        UserEntity user = userService.create("searchpages", "password123", Role.USER);
+        for (int i = 0; i < 5; i++) {
+            save(user, "{pagemarker" + i + "}");
+        }
+        save(user, "{other}");
+
+        Page<ParseHistoryResponse> page = parseHistoryService.findHistories(
+                user, filter("pagemarker", null, null), PageRequest.of(1, 2, NEWEST_FIRST));
+
+        assertThat(page.getTotalElements()).isEqualTo(5);
+        assertThat(page.getTotalPages()).isEqualTo(3);
+        assertThat(page.getContent()).hasSize(2);
+    }
+
     private Long save(UserEntity userEntity, String source) {
         Node tree = new Parser(new Lexer(source).tokenize()).parse();
         Stats stats = new StatsAssemble().assemble(tree);
@@ -108,5 +208,18 @@ class ParseHistoryServiceTest {
         return savedEntity.getId();
     }
 
+    private ParserHistoryFilterRequest filter(String text, LocalDate from, LocalDate to) {
+        ParserHistoryFilterRequest filter = new ParserHistoryFilterRequest();
+        filter.setQuery(text);
+        filter.setFrom(from);
+        filter.setTo(to);
+        return filter;
+    }
+
+    private List<String> sources(UserEntity viewer, ParserHistoryFilterRequest filter) {
+        return parseHistoryService.findHistories(viewer, filter, FIRST_PAGE).getContent().stream()
+                .map(ParseHistoryResponse::source)
+                .toList();
+    }
 }
 
