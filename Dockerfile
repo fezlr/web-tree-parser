@@ -8,7 +8,10 @@ RUN ./gradlew --no-daemon bootJar -x test
 
 FROM eclipse-temurin:25-jre
 WORKDIR /app
-RUN useradd --system --create-home appuser
+RUN apt-get update \
+        && apt-get install -y --no-install-recommends curl \
+        && rm -rf /var/lib/apt/lists/* \
+        && useradd --system --create-home appuser
 COPY --from=build /workspace/build/libs/app.jar app.jar
 USER appuser
 EXPOSE 8080
