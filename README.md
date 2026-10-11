@@ -91,6 +91,36 @@ To remove all data and start from scratch:
 docker compose down -v
 ```
 
+## Pages
+*Login:*
+
+<img width="738" height="637" alt="image" src="https://github.com/user-attachments/assets/ba378616-29c1-4ba7-bc1e-b146fbda8bc0" />
+
+*Register:*
+
+<img width="643" height="693" alt="image" src="https://github.com/user-attachments/assets/52b6e189-dd2b-4f5d-8be9-3b76230bc180" />
+
+*Parser:*
+
+<img width="1097" height="831" alt="image" src="https://github.com/user-attachments/assets/12803ff3-2908-46d6-a401-6b403bbfb426" />
+
+*Result:*
+
+<img width="1101" height="868" alt="image" src="https://github.com/user-attachments/assets/41a6e17f-1ca8-436f-aaff-d8c8992fca48" />
+
+*History:*
+
+<img width="1115" height="629" alt="image" src="https://github.com/user-attachments/assets/911bf90d-173b-4acc-95c7-5082169921f6" />
+
+*Users (only for admins):*
+
+<img width="1081" height="367" alt="image" src="https://github.com/user-attachments/assets/b68afbba-d73e-4a68-abca-fd2419257316" />
+
+*Error page(404):*
+
+<img width="616" height="470" alt="image" src="https://github.com/user-attachments/assets/ca644f23-d313-497e-84bd-f1619ad78fcd" />
+
+
 ## Accounts and roles
 
 ### Default accounts
@@ -131,7 +161,7 @@ Administrator rules:
 | `/results/{id}/export?format=json` or `format=xml` | Download a result | owner, administrator |
 | `/history` | History with search, date filter and pagination | signed in |
 | `/admin/users` | User management | administrator |
-| `/actuator/health` | Health check, reports only the status | everyone (open for k8s for instance; need to restrict for everyone in production) |
+| `/actuator/health` | Health check, reports only the status | everyone |
 
 
 ### Input syntax
