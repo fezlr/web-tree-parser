@@ -1,6 +1,7 @@
 package com.fezlr.web_tree_parser.auth.service;
 
 import com.fezlr.web_tree_parser.auth.dto.request.RegisterRequest;
+import com.fezlr.web_tree_parser.auth.exception.RegistrationException;
 import com.fezlr.web_tree_parser.user.entity.Role;
 import com.fezlr.web_tree_parser.user.entity.UserEntity;
 import com.fezlr.web_tree_parser.user.exception.UsernameAlreadyExistsException;
@@ -56,13 +57,13 @@ class RegistrationServiceTest {
     }
 
     @Test
-    void shouldThrowUsernameAlreadyExists_whenUsernameIsAlreadyTaken() {
+    void shouldThrowRegistrationException_whenUsernameIsAlreadyTaken() {
         RegisterRequest request = request("anton", "password123");
         when(userService.create("anton", "password123", Role.USER))
-                .thenThrow(new UsernameAlreadyExistsException("anton"));
+                .thenThrow(new RegistrationException("anton", "Username is already taken"));
 
         assertThatThrownBy(() -> registrationService.register(request))
-                .isInstanceOf(UsernameAlreadyExistsException.class);
+                .isInstanceOf(RegistrationException.class);
     }
 
     @Test
