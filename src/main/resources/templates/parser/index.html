@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Set parser</title>
-</head>
+<head th:replace="~{fragments/head :: head('Parser')}"></head>
 <body>
 <div th:replace="~{fragments/nav :: nav}"></div>
 
-<h1>Set parser</h1>
+<main class="container">
+    <h1>Set parser</h1>
+    <p class="muted">Enter a set, for example <code>{1, {a, "text"}}</code>.</p>
 
-<form th:action="@{/parse}" th:object="${parseRequest}" method="post">
-    <label for="input">Set</label>
-    <div>
-        <textarea id="input" th:field="*{input}" rows="6" cols="70"></textarea>
-    </div>
-    <div th:if="${#fields.hasErrors('input')}" th:errors="*{input}"></div>
-    <button type="submit">Parse</button>
-</form>
+    <form class="card" th:action="@{/parse}" th:object="${parseRequest}" method="post">
+        <div class="field">
+            <label for="input">Set</label>
+            <textarea id="input" th:field="*{input}" rows="6" spellcheck="false"
+                      placeholder='{1, {a, "text"}}'></textarea>
+            <p class="field-error" th:if="${#fields.hasErrors('input')}" th:errors="*{input}"></p>
+        </div>
+        <button type="submit" class="btn btn-primary">Parse</button>
+    </form>
 
-<h2>Upload a file</h2>
-
-<form th:action="@{/parse/file}" method="post" enctype="multipart/form-data">
-    <input type="file" id="file" name="file" accept=".txt,text/plain">
-    <button type="submit">Upload and parse</button>
-    <div th:if="${fileError != null}" th:text="${fileError}"></div>
-</form>
+    <form class="card" th:action="@{/parse/file}" method="post" enctype="multipart/form-data">
+        <h2>Or upload a file</h2>
+        <p class="muted">Plain text file (.txt), UTF-8, up to ~200 KB.</p>
+        <div class="field">
+            <input type="file" id="file" name="file" accept=".txt,text/plain">
+            <p class="field-error" th:if="${fileError != null}" th:text="${fileError}"></p>
+        </div>
+        <button type="submit" class="btn btn-secondary">Upload and parse</button>
+    </form>
+</main>
 </body>
 </html>

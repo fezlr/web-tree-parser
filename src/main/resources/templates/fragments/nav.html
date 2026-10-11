@@ -2,15 +2,21 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
-<nav th:fragment="nav">
-    <a th:href="@{/}">Parser</a>
-    <a th:href="@{/history}">History</a>
-    <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
-    <span>| Signed in as <span sec:authentication="name"></span></span>
-    <form th:action="@{/logout}" method="post" style="display: inline">
-        <button type="submit">Log out</button>
-    </form>
-    <hr>
-</nav>
+<header th:fragment="nav" class="site-header">
+    <div class="nav">
+        <a class="brand" th:href="@{/}">Set Tree Parser</a>
+        <nav class="nav-links">
+            <a th:href="@{/}">Parser</a>
+            <a th:href="@{/history}">History</a>
+            <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')">Users</a>
+        </nav>
+        <div class="nav-user">
+            <span class="muted" sec:authentication="name"></span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-secondary btn-small">Log out</button>
+            </form>
+        </div>
+    </div>
+</header>
 </body>
 </html>

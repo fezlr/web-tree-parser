@@ -1,42 +1,69 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Parse result</title>
-</head>
+<head th:replace="~{fragments/head :: head('Result')}"></head>
 <body>
 <div th:replace="~{fragments/nav :: nav}"></div>
 
-<h1>Result #<span th:text="${entry.id}"></span></h1>
-<p>
-    Author: <span th:text="${entry.author}"></span>,
-    parsed at <span th:text="${#temporals.format(entry.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
-</p>
+<main class="container">
+    <div class="page-head">
+        <div>
+            <h1>Result #<span th:text="${entry.id}"></span></h1>
+            <p class="muted">
+                by <span th:text="${entry.author}"></span> ·
+                <span th:text="${#temporals.format(entry.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+            </p>
+        </div>
+        <div class="actions">
+            <a class="btn btn-secondary" th:href="@{/results/{id}/export(id=${entry.id}, format='json')}">Export JSON</a>
+            <a class="btn btn-secondary" th:href="@{/results/{id}/export(id=${entry.id}, format='xml')}">Export XML</a>
+        </div>
+    </div>
 
-<p>
-    Export:
-    <a th:href="@{/results/{id}/export(id=${entry.id}, format='json')}">JSON</a>
-    |
-    <a th:href="@{/results/{id}/export(id=${entry.id}, format='xml')}">XML</a>
-</p>
+    <section class="stats">
+        <div class="stat">
+            <span class="stat-value" th:text="${result.stats().totalElements()}"></span>
+            <span class="stat-label">Total elements</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value" th:text="${result.stats().setCount()}"></span>
+            <span class="stat-label">Sets</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value" th:text="${result.stats().subsets()}"></span>
+            <span class="stat-label">Subsets</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value" th:text="${result.stats().maxDepth()}"></span>
+            <span class="stat-label">Max depth</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value" th:text="${result.stats().numberCount()}"></span>
+            <span class="stat-label">Numbers</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value" th:text="${result.stats().identifierCount()}"></span>
+            <span class="stat-label">Identifiers</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value" th:text="${result.stats().stringCount()}"></span>
+            <span class="stat-label">Strings</span>
+        </div>
+    </section>
 
-<h2>Source</h2>
-<pre th:text="${entry.source}"></pre>
+    <section class="card">
+        <h2>Tree</h2>
+        <pre class="tree" th:text="${result.tree()}"></pre>
+    </section>
 
-<h2>Tree</h2>
-<pre th:text="${result.tree()}"></pre>
+    <section class="card">
+        <h2>Source</h2>
+        <pre class="source" th:text="${entry.source}"></pre>
+    </section>
 
-<h2>Statistics</h2>
-<table border="1">
-    <tr><th>Total elements</th><td th:text="${result.stats().totalElements()}"></td></tr>
-    <tr><th>Sets</th><td th:text="${result.stats().setCount()}"></td></tr>
-    <tr><th>Subsets</th><td th:text="${result.stats().subsets()}"></td></tr>
-    <tr><th>Max depth</th><td th:text="${result.stats().maxDepth()}"></td></tr>
-    <tr><th>Numbers</th><td th:text="${result.stats().numberCount()}"></td></tr>
-    <tr><th>Identifiers</th><td th:text="${result.stats().identifierCount()}"></td></tr>
-    <tr><th>Strings</th><td th:text="${result.stats().stringCount()}"></td></tr>
-</table>
-
-<p><a th:href="@{/}">Parse another</a> | <a th:href="@{/history}">History</a></p>
+    <div class="actions">
+        <a class="btn btn-primary" th:href="@{/}">Parse another</a>
+        <a class="btn btn-secondary" th:href="@{/history}">History</a>
+    </div>
+</main>
 </body>
 </html>

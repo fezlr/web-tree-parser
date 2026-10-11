@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Sign in</title>
-</head>
-<body>
-<h1>Sign in</h1>
+<head th:replace="~{fragments/head :: head('Sign in')}"></head>
+<body class="auth-page">
+<main class="card auth-card">
+    <h1>Sign in</h1>
+    <p class="subtitle muted">Set Tree Parser</p>
 
-<p th:if="${param.error}">Invalid username or password, or the account is blocked.</p>
-<p th:if="${param.blocked}">Your account has been blocked or removed. You have been signed out.</p>
-<p th:if="${param.logout}">You have been signed out.</p>
-<p th:if="${param.registered}">Account created. You can sign in now.</p>
+    <div class="alert alert-error" th:if="${param.error}">Invalid username or password, or the account is blocked.</div>
+    <div class="alert alert-error" th:if="${param.blocked}">Your account has been blocked or removed. You have been signed out.</div>
+    <div class="alert alert-info" th:if="${param.logout}">You have been signed out.</div>
+    <div class="alert alert-success" th:if="${param.registered}">Account created. You can sign in now.</div>
 
-<form th:action="@{/login}" method="post">
-    <div>
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required autofocus>
-    </div>
-    <div>
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
-    </div>
-    <button type="submit">Sign in</button>
-</form>
+    <form th:action="@{/login}" method="post">
+        <div class="field">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" autocomplete="username" required autofocus>
+        </div>
+        <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+    </form>
 
-<p>No account yet? <a th:href="@{/register}">Register</a></p>
+    <p class="hint">No account yet? <a th:href="@{/register}">Register</a></p>
+</main>
 </body>
 </html>
