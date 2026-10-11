@@ -29,6 +29,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-testcontainers'
     implementation 'org.testcontainers:testcontainers-postgresql'
     implementation 'org.flywaydb:flyway-database-postgresql'
+    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     // Source: https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api
     implementation 'jakarta.validation:jakarta.validation-api'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
