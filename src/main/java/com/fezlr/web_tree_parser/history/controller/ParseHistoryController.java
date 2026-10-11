@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,12 +17,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import static com.fezlr.web_tree_parser.common.AppConstants.NEWEST_FIRST;
+import static com.fezlr.web_tree_parser.common.AppConstants.PAGE_SIZE;
 
 @RequiredArgsConstructor
 @Controller
 public class ParseHistoryController {
-    private static final int PAGE_SIZE = 20;
-    private static final Sort NEWEST_FIRST = Sort.by(Sort.Direction.DESC, "createdAt", "id");
     private final ParseHistoryService parseHistoryService;
 
     @GetMapping("/history")
