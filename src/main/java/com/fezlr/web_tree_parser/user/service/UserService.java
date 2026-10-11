@@ -44,4 +44,10 @@ public class UserService {
         return userRepository
                 .existsByUsernameIgnoreCase(username.strip());
     }
+
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> findById(Long id) {
+        return userRepository
+                .findById(id);
+    }
 }
