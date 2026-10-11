@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h1>Users</h1>
+
+<p th:if="${message != null}" th:text="${message}"></p>
+<p th:if="${error != null}" th:text="${error}"></p>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Change role</th>
+        <th>Account</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="account : ${page.content}">
+        <td th:text="${account.id}"></td>
+        <td th:text="${account.username}"></td>
+        <td th:text="${account.role}"></td>
+        <td th:text="${account.enabled} ? 'Active' : 'Blocked'"></td>
+        <td th:text="${#temporals.format(account.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td>
+            <form th:unless="${account.id == currentUserId}"
+                  th:action="@{/admin/users/{id}/role(id=${account.id})}" method="post">
+                <input type="hidden" name="page" th:value="${page.number}">
+                <select name="role">
+                    <option th:each="candidate : ${roles}"
+                            th:value="${candidate}"
+                            th:text="${candidate}"
+                            th:selected="${candidate == account.role}"></option>
+                </select>
+                <button type="submit">Save</button>
+            </form>
+        </td>
+        <td>
+            <form th:unless="${account.id == currentUserId}"
+                  th:action="@{/admin/users/{id}/enabled(id=${account.id})}" method="post">
+                <input type="hidden" name="page" th:value="${page.number}">
+                <input type="hidden" name="enabled" th:value="${!account.enabled}">
+                <button type="submit" th:text="${account.enabled} ? 'Block' : 'Unblock'"></button>
+            </form>
+            <span th:if="${account.id == currentUserId}">(you)</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<p th:if="${page.totalPages > 1}">
+    <a th:if="${page.hasPrevious()}" th:href="@{/admin/users(page=${page.number - 1})}">Previous</a>
+    <span th:text="|Page ${page.number + 1} of ${page.totalPages}|"></span>
+    <a th:if="${page.hasNext()}" th:href="@{/admin/users(page=${page.number + 1})}">Next</a>
+</p>
+</body>
+</html>
