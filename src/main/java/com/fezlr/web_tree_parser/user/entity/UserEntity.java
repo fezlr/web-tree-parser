@@ -17,11 +17,9 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //TODO: length can be variable
     @Column(nullable = false, length = 50)
     private String username;
 
-    //TODO: length can be variable
     @Column(nullable = false, length = 100)
     private String passwordHash;
 
