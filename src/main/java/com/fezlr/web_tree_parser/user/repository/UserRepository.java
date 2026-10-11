@@ -1,5 +1,6 @@
 package com.fezlr.web_tree_parser.user.repository;
 
+import com.fezlr.web_tree_parser.user.entity.Role;
 import com.fezlr.web_tree_parser.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,4 +11,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByUsernameIgnoreCase(String username);
 
     boolean existsByUsernameIgnoreCase(String username);
+
+    long countByRoleAndEnabled(Role role, boolean enabled);
 }
