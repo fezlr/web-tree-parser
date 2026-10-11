@@ -12,6 +12,7 @@ The supported element types are numbers, identifiers, strings and nested sets.
 - Personal parse history stored in a database. An administrator sees the history of all users.
 - History search by text and filter by date, with pagination.
 - Import of a set from a `.txt` file.
+- Contains CI in Github Actions.
 - Export of a result to JSON or XML.
 - Administrator panel: user list, role management, account blocking.
 
@@ -25,6 +26,7 @@ The supported element types are numbers, identifiers, strings and nested sets.
 - **Accounts.** Password change, deleting own history entries, protection against password guessing.
 - **Operations.** Spring Boot Actuator health endpoint with a container health check, CI/CD.
 - **Localization.** Russian and English interface.
+- **Actuator**. Restrict for all users (connect actuator to Kubernetes and Prometheus instead which is sufficient for a test assignment).
 
 ## Stack
 
@@ -131,6 +133,8 @@ Administrator rules:
 | `/results/{id}/export?format=json` or `format=xml` | Download a result | owner, administrator |
 | `/history` | History with search, date filter and pagination | signed in |
 | `/admin/users` | User management | administrator |
+| `/actuator/health` | Health check, reports only the status | everyone (open for k8s for instance; need to restrict for everyone in production) |
+
 
 ### Input syntax
 
