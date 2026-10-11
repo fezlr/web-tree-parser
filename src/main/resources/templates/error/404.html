@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Not found')}"></head>
+<body class="auth-page">
+
+    <main class="card auth-card error-card">
+        <p class="error-code">404</p>
+        <h1>Page not found</h1>
+        <p class="muted">The page does not exist, or you do not have access to it</p>
+        <a class="btn btn-primary" th:href="@{/}">Back to parser</a>
+    </main>
+
+</body>
+</html>

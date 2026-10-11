@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Error')}"></head>
+<body class="auth-page">
+
+    <main class="card auth-card error-card">
+        <p class="error-code" th:text="${status}">500</p>
+        <h1>Something went wrong</h1>
+        <p class="muted">Please try again</p>
+        <a class="btn btn-primary" th:href="@{/}">Back to parser</a>
+    </main>
+
+</body>
+</html>

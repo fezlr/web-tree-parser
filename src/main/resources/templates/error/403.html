@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Access denied')}"></head>
+<body class="auth-page">
+
+    <main class="card auth-card error-card">
+        <p class="error-code">403</p>
+        <h1>Access denied</h1>
+        <p class="muted">You do not have permission to open this page</p>
+        <a class="btn btn-primary" th:href="@{/}">Back to parser</a>
+    </main>
+
+</body>
+</html>
