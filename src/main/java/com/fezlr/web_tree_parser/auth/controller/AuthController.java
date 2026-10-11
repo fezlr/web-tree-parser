@@ -1,6 +1,7 @@
 package com.fezlr.web_tree_parser.auth.controller;
 
 import com.fezlr.web_tree_parser.auth.dto.request.RegisterRequest;
+import com.fezlr.web_tree_parser.auth.exception.RegistrationException;
 import com.fezlr.web_tree_parser.auth.service.RegistrationService;
 import com.fezlr.web_tree_parser.user.exception.UsernameAlreadyExistsException;
 import jakarta.validation.Valid;
@@ -32,20 +33,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registerRequest") RegisterRequest registerRequest, BindingResult bindingResult) {
-        //validate
-        //TODO: need to transfer to another class
-        if (!bindingResult.hasFieldErrors("password") && !bindingResult.hasFieldErrors("confirmPassword") && !Objects.equals(registerRequest.getPassword(), registerRequest.getConfirmPassword())) {
-            bindingResult.rejectValue("confirmPassword", "password.mismatch", "Passwords do not match");
-        }
-
         if (bindingResult.hasErrors()) {
             return "auth/register";
         }
 
         try {
             registrationService.register(registerRequest);
-        } catch (UsernameAlreadyExistsException e) {
-            bindingResult.rejectValue("username", "username.taken", "Username is already taken");
+        } catch (RegistrationException e) {
+            bindingResult.rejectValue(e.getField(), "registration.failed", e.getMessage());
             return "auth/register";
         }
 
