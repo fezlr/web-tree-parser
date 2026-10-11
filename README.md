@@ -18,8 +18,6 @@ The supported element types are numbers, identifiers, strings and nested sets.
 
 ## Future improvements
 
-### What to do in the future?
-
 - **Caching of the current user check.** Keep id, role, enabled flag in a cache and take it on every administrator action (this removes the query on each request).
 - **Role hierarchy.** Add a `SUPER_ADMIN` role that manages administrators while `ADMIN` manages only regular users. This would replace the special rules for the last administrator (also maybe it needs a migration of the `role` check constraint).
 - **Search.** User search by username in the administrator panel, a history filter by author for administrators, and a `pg_trgm` index for substring search on large histories.
