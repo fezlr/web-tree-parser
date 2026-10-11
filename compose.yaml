@@ -28,6 +28,12 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
     ports:
       - "${APP_PORT}:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "--silent", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
 
 volumes:
   pgdata:
